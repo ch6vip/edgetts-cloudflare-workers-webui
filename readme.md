@@ -139,7 +139,23 @@ curl -X POST "https://your-domain.pages.dev/v1/audio/speech" \
     "stream": true
   }' --output streaming.mp3
 ```
+## 🌍 Use Cases
 
+- AI assistants (voice output)
+- OpenAI-compatible TTS API backend
+- Browser-based AI tools
+- Content generation pipelines
+
+## 🚀 Why this project
+
+This project enables developers to use high-quality TTS without vendor lock-in, while maintaining compatibility with OpenAI-style APIs.
+
+## 🔗 Ecosystem Integration
+
+- OpenAI-compatible API
+- Cloudflare Workers edge deployment
+- AI workflow / agent systems
+  
 ## �� 项目文件
 
 - **`_worker.js`**: 核心服务文件，包含完整功能
@@ -157,6 +173,7 @@ curl -X POST "https://your-domain.pages.dev/v1/audio/speech" \
 - [GitHub 项目](https://github.com/samni728/edgetts-cloudflare-workers-webui)
 - [v1.2 Release](https://github.com/samni728/edgetts-cloudflare-workers-webui/releases/tag/v1.2)
 - [Edge TTS 音色列表](https://learn.microsoft.com/zh-cn/azure/ai-services/speech-service/language-support?tabs=tts#multilingual-voices)
+
 
 ## ⚖️ 使用声明
 
