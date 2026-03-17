@@ -163,7 +163,11 @@ This project enables developers to use high-quality TTS without vendor lock-in, 
 - OpenAI-compatible API
 - Cloudflare Workers edge deployment
 - AI workflow / agent systems
-  
+
+## 🌱 Vision
+
+This project aims to make AI voice infrastructure more accessible, scalable, and open for developers worldwide.
+
 ## �� 项目文件
 
 - **`_worker.js`**: 核心服务文件，包含完整功能
