@@ -1,5 +1,13 @@
 # CF-TTS Proxy Server (v1.2)
 
+## 🚀 Overview
+
+This project provides a high-performance, OpenAI-compatible Text-to-Speech (TTS) API deployed on Cloudflare Workers.
+
+It enables developers to build scalable AI voice systems at the edge, without relying on expensive proprietary APIs.
+
+Designed for real-world usage, it integrates seamlessly into AI workflows, agents, and automation pipelines.
+
 一个部署在 Cloudflare Pages 上的高性能文本转语音（TTS）代理服务，将微软 Edge TTS 封装成兼容 OpenAI API 的接口。
 
 ## ✨ 主要特性
