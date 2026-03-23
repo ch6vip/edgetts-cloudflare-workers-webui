@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git revert:*)"
+      "Bash(git revert:*)",
+      "Bash(find /e/test/edgetts-cloudflare-workers-webui -type f -name *.html -o -name *.css)",
+      "Bash(docker.exe info:*)",
+      "Bash('/mnt/c/Program Files/Docker/Docker/resources/bin/docker.exe' ps -a)",
+      "Bash(cmd.exe /c 'docker ps -a')",
+      "Bash(powershell.exe -Command \"docker ps -a\")",
+      "Bash(git checkout:*)"
     ]
   }
 }
