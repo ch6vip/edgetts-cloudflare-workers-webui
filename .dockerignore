@@ -1,0 +1,9 @@
+.git
+.github
+.claude
+screenshorts/
+tts_list/
+*.zip
+*.md
+*.jpg
+*.png

@@ -83,3 +83,12 @@ const server = createServer(async (req, res) => {
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`CF-TTS server running on http://0.0.0.0:${PORT}`);
 });
+
+// Graceful shutdown
+function shutdown() {
+  console.log('Shutting down gracefully...');
+  server.close(() => process.exit(0));
+  setTimeout(() => process.exit(1), 5000);
+}
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);
