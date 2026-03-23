@@ -1,0 +1,5 @@
+{
+  "name": "edgetts-cloudflare-workers-webui",
+  "type": "module",
+  "private": true
+}

@@ -2,7 +2,7 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY _worker.js server.js kv-store.js ./
+COPY package.json _worker.js server.js kv-store.js ./
 
 RUN mkdir -p /data/kv
 
