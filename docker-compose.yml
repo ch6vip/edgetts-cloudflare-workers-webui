@@ -7,6 +7,7 @@ services:
       - API_KEY=your-api-key-here
       - PORT=3000
       - DATA_DIR=/data/kv
+      - LOG_LEVEL=info
     volumes:
       - tts_data:/data
     restart: unless-stopped
