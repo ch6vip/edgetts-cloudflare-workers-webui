@@ -1,5 +1,11 @@
 import { createServer } from "node:http";
+import { webcrypto } from "node:crypto";
 import { FileKVStore } from "./kv-store.js";
+
+// Polyfill globalThis.crypto for Node.js 18 (Cloudflare Workers has it globally)
+if (!globalThis.crypto) {
+  globalThis.crypto = webcrypto;
+}
 
 const PORT = process.env.PORT || 3000;
 const DATA_DIR = process.env.DATA_DIR || "/data/kv";
