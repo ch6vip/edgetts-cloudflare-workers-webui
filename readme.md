@@ -69,6 +69,72 @@ Designed for real-world usage, it integrates seamlessly into AI workflows, agent
 
 ![KV 绑定步骤 4](screenshorts/kv_4.png)
 
+## 🐳 Docker 部署
+
+除了 Cloudflare Pages 部署，本项目也支持通过 Docker 自托管部署。
+
+### 方式一：Docker Run
+
+```bash
+docker run -d \
+  -p 3000:3000 \
+  -e API_KEY=your-api-key-here \
+  -v tts_data:/data \
+  --name edgetts-webui \
+  --restart unless-stopped \
+  ghcr.io/ch6vip/edgetts-cloudflare-workers-webui:latest
+```
+
+自定义端口（例如映射到 8090）：
+
+```bash
+docker run -d \
+  -p 8090:3000 \
+  -e API_KEY=your-api-key-here \
+  -v tts_data:/data \
+  --name edgetts-webui \
+  --restart unless-stopped \
+  ghcr.io/ch6vip/edgetts-cloudflare-workers-webui:latest
+```
+
+### 方式二：Docker Compose
+
+创建 `docker-compose.yml`：
+
+```yaml
+services:
+  cf-tts:
+    image: ghcr.io/ch6vip/edgetts-cloudflare-workers-webui:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - API_KEY=your-api-key-here
+      - PORT=3000
+      - DATA_DIR=/data/kv
+    volumes:
+      - tts_data:/data
+    restart: unless-stopped
+
+volumes:
+  tts_data:
+```
+
+启动服务：
+
+```bash
+docker compose up -d
+```
+
+### 环境变量说明
+
+| 变量 | 默认值 | 说明 |
+|------|--------|------|
+| `API_KEY` | 空 | API 访问密钥 |
+| `PORT` | `3000` | 容器内监听端口 |
+| `DATA_DIR` | `/data/kv` | KV 数据存储路径 |
+
+部署完成后访问 `http://your-ip:3000` 即可使用 WebUI。
+
 ## 📖 使用方法
 
 ### WebUI 界面
