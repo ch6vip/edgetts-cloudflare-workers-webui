@@ -11,11 +11,10 @@ const kvStore = new FileKVStore(DATA_DIR);
 const worker = await import("./_worker.js");
 
 const server = createServer(async (req, res) => {
-  console.log(`${req.method} ${req.url}`);
   try {
     // Build full URL
-    const host = req.headers.host || `127.0.0.1:${PORT}`;
     const protocol = req.headers["x-forwarded-proto"] || "http";
+    const host = req.headers.host || `0.0.0.0:${PORT}`;
     const url = new URL(req.url, `${protocol}://${host}`);
 
     // Read request body
@@ -26,22 +25,18 @@ const server = createServer(async (req, res) => {
       if (chunks.length) body = Buffer.concat(chunks);
     }
 
-    // Build clean headers for Web Request
-    const headers = new Headers();
+    // Convert to Web Request (filter out Node.js-specific headers that are forbidden in Web API)
+    const filteredHeaders = {};
     for (const [key, value] of Object.entries(req.headers)) {
-      // Skip hop-by-hop headers forbidden in Web API Request
-      if (['connection', 'keep-alive', 'transfer-encoding', 'upgrade'].includes(key)) continue;
-      if (value === undefined) continue;
-      try {
-        headers.set(key, Array.isArray(value) ? value.join(', ') : String(value));
-      } catch {
-        // skip invalid header
+      if (!['connection', 'keep-alive', 'transfer-encoding', 'upgrade', 'host'].includes(key.toLowerCase()) && value !== undefined) {
+        filteredHeaders[key] = Array.isArray(value) ? value.join(', ') : value;
       }
     }
+    filteredHeaders['host'] = host;
 
     const webRequest = new Request(url.toString(), {
       method: req.method,
-      headers,
+      headers: filteredHeaders,
       body,
       duplex: "half",
     });
@@ -54,11 +49,11 @@ const server = createServer(async (req, res) => {
     const webResponse = await worker.default.fetch(webRequest, env, {});
 
     // Write status & headers
-    const resHeaders = {};
+    const headers = {};
     webResponse.headers.forEach((v, k) => {
-      resHeaders[k] = v;
+      headers[k] = v;
     });
-    res.writeHead(webResponse.status, resHeaders);
+    res.writeHead(webResponse.status, headers);
 
     // Write body
     if (webResponse.body) {
