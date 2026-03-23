@@ -10,6 +10,15 @@
 // Configuration & Global State
 // =================================================================================
 
+// Simple structured logger for both Cloudflare Workers and Node.js
+function _log(level, ...args) {
+  const ts = new Date().toISOString();
+  const prefix = `[${ts}] [${level}]`;
+  if (level === "ERROR") console.error(prefix, ...args);
+  else if (level === "WARN") console.warn(prefix, ...args);
+  else console.log(prefix, ...args);
+}
+
 // Environment variables will be accessed directly from globalThis when needed
 const MAX_STORAGE_SIZE = 1024 * 1024 * 1024; // 1GB limit
 const OPENAI_VOICE_MAP = {
@@ -44,10 +53,7 @@ function generateUserIdFromDomain(requestUrl) {
     );
   } catch (error) {
     // 如果解析失败，使用默认值
-    console.warn(
-      "Failed to generate userId from domain, using default:",
-      error
-    );
+    _log("WARN", "Failed to generate userId from domain, using default:", error);
     return "0f04d16a175c411e";
   }
 }
@@ -107,7 +113,7 @@ async function handleRequest(request) {
     // 检查是否为分享UUID (only for /v1/ routes)
     if (url.pathname.startsWith("/v1/") && providedKey.startsWith("share_")) {
       const shareUUID = providedKey.replace("share_", "");
-      console.log("Share UUID validation for:", shareUUID);
+      _log("INFO", "Share UUID validation for:", shareUUID);
 
       if (!globalThis.TTS_HISTORY) {
         return errorResponse("KV storage not configured", 500, "storage_error");
@@ -118,7 +124,7 @@ async function handleRequest(request) {
           `share_auth_${shareUUID}`
         );
         if (!shareAuthData) {
-          console.log("Share UUID not found");
+          _log("WARN", "Share UUID not found");
           return errorResponse("Invalid share UUID.", 403, "invalid_api_key");
         }
 
@@ -147,7 +153,7 @@ async function handleRequest(request) {
 
         // 比较哈希值
         if (JSON.stringify(hashArray) !== JSON.stringify(storedHash)) {
-          console.log("Content hash mismatch");
+          _log("WARN", "Content hash mismatch");
           return errorResponse(
             "Content validation failed.",
             403,
@@ -155,9 +161,9 @@ async function handleRequest(request) {
           );
         }
 
-        console.log("Share UUID validation passed");
+        _log("INFO", "Share UUID validation passed");
       } catch (error) {
-        console.log("Share UUID validation error:", error);
+        _log("ERROR", "Share UUID validation error:", error);
         return errorResponse(
           "Share validation failed.",
           403,
@@ -997,7 +1003,7 @@ async function getEndpoint(request) {
       return data;
     } catch (error) {
       lastError = error;
-      console.error(`Endpoint attempt ${attempt} failed:`, error.message);
+      _log("ERROR", `Endpoint attempt ${attempt} failed:`, error.message);
 
       // 如果不是最后一次尝试，等待一下再重试
       if (attempt < 3) {
@@ -1008,7 +1014,7 @@ async function getEndpoint(request) {
 
   // 如果所有重试都失败，尝试使用缓存的 token
   if (tokenInfo.token) {
-    console.warn("Using cached token due to endpoint failures");
+    _log("WARN", "Using cached token due to endpoint failures");
     return tokenInfo.endpoint;
   }
 
@@ -1060,7 +1066,7 @@ async function cleanupStorageIfNeeded(newItemSize) {
     // Update history index
     await globalThis.TTS_HISTORY.put("history_index", JSON.stringify(history));
   } catch (error) {
-    console.error("Cleanup failed:", error);
+    _log("ERROR", "Cleanup failed:", error);
   }
 }
 
@@ -1089,7 +1095,7 @@ async function updateHistoryIndex(id, metadata) {
 
     await globalThis.TTS_HISTORY.put("history_index", JSON.stringify(history));
   } catch (error) {
-    console.error("Failed to update history index:", error);
+    _log("ERROR", "Failed to update history index:", error);
   }
 }
 
