@@ -14,7 +14,7 @@ const server = createServer(async (req, res) => {
   try {
     // Build full URL
     const protocol = req.headers["x-forwarded-proto"] || "http";
-    const host = req.headers.host || `localhost:${PORT}`;
+    const host = req.headers.host || `0.0.0.0:${PORT}`;
     const url = new URL(req.url, `${protocol}://${host}`);
 
     // Read request body
@@ -25,10 +25,18 @@ const server = createServer(async (req, res) => {
       if (chunks.length) body = Buffer.concat(chunks);
     }
 
-    // Convert to Web Request
+    // Convert to Web Request (filter out Node.js-specific headers that are forbidden in Web API)
+    const filteredHeaders = {};
+    for (const [key, value] of Object.entries(req.headers)) {
+      if (!['connection', 'keep-alive', 'transfer-encoding', 'upgrade', 'host'].includes(key.toLowerCase()) && value !== undefined) {
+        filteredHeaders[key] = Array.isArray(value) ? value.join(', ') : value;
+      }
+    }
+    filteredHeaders['host'] = host;
+
     const webRequest = new Request(url.toString(), {
       method: req.method,
-      headers: req.headers,
+      headers: filteredHeaders,
       body,
       duplex: "half",
     });
@@ -58,7 +66,7 @@ const server = createServer(async (req, res) => {
     }
     res.end();
   } catch (err) {
-    console.error("Request error:", err);
+    console.error("Request error:", err.stack || err);
     if (!res.headersSent) {
       res.writeHead(500, { "Content-Type": "application/json" });
     }
