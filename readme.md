@@ -92,6 +92,7 @@ docker run -d \
   -v tts_data:/data \
   --name edgetts-webui \
   --restart unless-stopped \
+  --log-opt max-size=10m --log-opt max-file=3 \
   ghcr.io/ch6vip/edgetts-cloudflare-workers-webui:latest
 ```
 
@@ -104,6 +105,7 @@ docker run -d \
   -v tts_data:/data \
   --name edgetts-webui \
   --restart unless-stopped \
+  --log-opt max-size=10m --log-opt max-file=3 \
   ghcr.io/ch6vip/edgetts-cloudflare-workers-webui:latest
 ```
 
@@ -138,6 +140,7 @@ docker compose up -d
 | `API_KEY` | 空 | API 访问密钥 |
 | `PORT` | `3000` | 容器内监听端口 |
 | `DATA_DIR` | `/data/kv` | KV 数据存储路径 |
+| `LOG_LEVEL` | `info` | 日志级别（debug/info/warn/error） |
 
 部署完成后访问 `http://your-ip:3000` 即可使用。
 
