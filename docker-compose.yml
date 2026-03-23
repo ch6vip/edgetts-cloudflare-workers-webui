@@ -1,0 +1,15 @@
+services:
+  cf-tts:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - API_KEY=your-api-key-here
+      - PORT=3000
+      - DATA_DIR=/data/kv
+    volumes:
+      - tts_data:/data
+    restart: unless-stopped
+
+volumes:
+  tts_data:
